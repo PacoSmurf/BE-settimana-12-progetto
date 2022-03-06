@@ -28,7 +28,7 @@ public class ApplicationStartupRunner implements CommandLineRunner {
 		
 		Autore autore = new Autore();
 		autore.setNome("giovanni");
-		autore.setCognome("eossi");
+		autore.setCognome("rossi");
 		autorerepository.save(autore);
 		
 		
