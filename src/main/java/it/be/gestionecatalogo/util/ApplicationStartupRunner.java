@@ -46,14 +46,7 @@ public class ApplicationStartupRunner implements CommandLineRunner {
 	    librorepository.save(libro);
 	    
 	    
-	    Libro libro2 = new Libro();
-	    libro2.setTitolo("cucu");
-	    libro2.setAnnoPubblicazione(2004);
-	    libro2.setPrezzo(14.59);
-	    libro2.getAutori().add(autore);
-	    libro2.getCategorie().add(categoria);
-	    librorepository.save(libro2);
-	    
+
 	
 	    
 		

@@ -1,5 +1,6 @@
 package it.be.gestionecatalogo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,5 +58,16 @@ public class LibroService {
 	public Libro save(Libro libro) {
 		return librorepository.save(libro);
 	}
+	public void deleteLibriNoAutori() {
+        List<Libro> all = librorepository.findAll();
+        List<Libro> libriNoAutori = new ArrayList<>();
+        for(Libro libro : all) {
+            if(libro.getAutori().isEmpty()) {
+                libriNoAutori.add(libro);
+            }
+        }
+        librorepository.deleteAll(libriNoAutori);
+
+    }
 
 }

@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.be.gestionecatalogo.model.Categoria;
+import it.be.gestionecatalogo.model.Libro;
 import it.be.gestionecatalogo.service.CategoriaService;
+import it.be.gestionecatalogo.service.LibroService;
 
 @RestController
 @RequestMapping("/api")
@@ -26,6 +28,8 @@ import it.be.gestionecatalogo.service.CategoriaService;
 public class CategoriaController {
 	@Autowired
 	CategoriaService categoriaservice;
+	@Autowired
+	LibroService libroservice;
 
 	@GetMapping(path = "/categorie")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
@@ -77,8 +81,21 @@ public class CategoriaController {
 	@DeleteMapping(path = "/categoriacancella/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<String> delete(@PathVariable Long id) {
-		categoriaservice.delete(id);
-		return new ResponseEntity<>("Autore deleted", HttpStatus.OK);
+		Optional<Categoria> find = categoriaservice.findById(id);
+        if(!find.isEmpty()) {
+            Categoria delete = find.get();
+            List<Libro> allLibri = libroservice.findAll();
+            for(Libro libro : allLibri) {
+                libro.deleteAllCategorieFromSet(delete);
+            }
+            
+            categoriaservice.delete(id);
+            return new ResponseEntity<>("categoria cancellati", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("categoria non trovata", HttpStatus.BAD_REQUEST);
+        }
+
 
 	}
 

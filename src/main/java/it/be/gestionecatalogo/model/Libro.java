@@ -46,6 +46,16 @@ public class Libro {
 	inverseJoinColumns = @JoinColumn(name = "categoria_id", referencedColumnName = "id"))
 	private List<Categoria> categorie = new ArrayList<>();
 	
-
+	public void deleteAllFromSet(Autore a) {
+        if(this.autori.contains(a)) {
+            this.autori.remove(a);
+        }
+    }
+	
+	public void deleteAllCategorieFromSet(Categoria c) {
+        if(this.categorie.contains(c)) {
+            this.categorie.remove(c);
+        }
+    }
 
 }

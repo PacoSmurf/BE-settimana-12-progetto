@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.be.gestionecatalogo.model.Autore;
+import it.be.gestionecatalogo.model.Libro;
 import it.be.gestionecatalogo.service.AutoriService;
+import it.be.gestionecatalogo.service.LibroService;
 
 
 @RestController
@@ -27,6 +29,8 @@ import it.be.gestionecatalogo.service.AutoriService;
 public class AutoreController {
 	@Autowired
 	private AutoriService autoreservice;
+	@Autowired
+	private LibroService libroservice;
 	
 	@GetMapping(path = "/findall")
 	@Operation(summary="cerca tutti gli autori")
@@ -74,13 +78,23 @@ public class AutoreController {
 	@Operation(summary=" metodo per eliminare")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<String> delete(@PathVariable Long id) {
-		autoreservice.delete(id);
-		return new ResponseEntity<>("Autore deleted", HttpStatus.OK);
+		Optional<Autore> find = autoreservice.findById(id);
+        if(!find.isEmpty()) {
+            Autore delete = find.get();
+            List<Libro> allLibri = libroservice.findAll();
+            for(Libro libro : allLibri) {
+                libro.deleteAllFromSet(delete);
+            }
+            libroservice.deleteLibriNoAutori();
+            autoreservice.delete(id);
+            return new ResponseEntity<>("Autore e libri corrispondenti cancellati", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("Autore non trovato", HttpStatus.BAD_REQUEST);
+        }
+
 
 	}
-
-
-	
 	
 
 }
