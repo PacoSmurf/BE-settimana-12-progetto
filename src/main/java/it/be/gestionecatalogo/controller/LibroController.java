@@ -2,6 +2,7 @@ package it.be.gestionecatalogo.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,5 +84,28 @@ public class LibroController {
 		return new ResponseEntity<>("Libro deleted", HttpStatus.OK);
 
 	}
+	@GetMapping("/findallLibriByAutori/{autori}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @Operation(summary = "Trova tutti i libri disponibili di determinati autori", description = "id autori")
+    public ResponseEntity<List<Libro>> findAllByAutori(@PathVariable Set<Long> autori) {
+        List<Libro> libri = libroservice.findAllLibriByAutori(autori);
+        if (!libri.isEmpty()) {
+            return new ResponseEntity<>(libri, HttpStatus.OK);
+        } 
+        else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping("/categorie/{categorie}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @Operation(summary = " categorie", description = "id ")
+    public ResponseEntity<List<Libro>> findAllByCategorie(@PathVariable Set<Long> categorie) {
+        List<Libro> libri = libroservice.findAllByCategorie(categorie);
+        if (!libri.isEmpty()) {
+            return new ResponseEntity<>(libri, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
